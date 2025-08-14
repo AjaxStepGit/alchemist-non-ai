@@ -10,11 +10,21 @@ import * as React from 'react'
 import { checkRuleViolation } from '../lib/checkRuleViolation'
 import type { RulesConfig } from '../page'
 
+// Define a type for the data rows (replace with your actual data structure)
+interface RowData {
+    [key: string]: string | number | null // Adjust based on your data
+}
+
+// Define a more specific type for EditableTableProps
 interface EditableTableProps {
-    data: any[]
-    columns: ColumnDef<any, any>[]
-    onCellChange: (rowIndex: number, columnId: string, value: any) => void
-    validationErrors?: Record<string, string> // for the current entity only
+    data: RowData[]
+    columns: ColumnDef<RowData, string | number | null>[] // Specify value type
+    onCellChange: (
+        rowIndex: number,
+        columnId: string,
+        value: string | number | null
+    ) => void
+    validationErrors?: Record<string, string> // For the current entity only
     rulesConfig?: RulesConfig
     advancedErrors?: Record<number, string[]>
 }
@@ -36,7 +46,10 @@ export default function EditableTable({
         getCoreRowModel: getCoreRowModel(),
     })
 
-    const startEdit = (cellKey: string, initialValue: string) => {
+    const startEdit = (
+        cellKey: string,
+        initialValue: string | number | null
+    ) => {
         setEditingCell(cellKey)
         setTempValue(String(initialValue ?? ''))
     }
@@ -90,7 +103,10 @@ export default function EditableTable({
                                 const isInvalid = Boolean(
                                     validationErrors[cellKey]
                                 )
-                                const cellValue = cell.getValue() as any
+                                const cellValue = cell.getValue() as
+                                    | string
+                                    | number
+                                    | null
                                 const rowViolations =
                                     advancedErrors?.[row.index] ?? []
 
@@ -107,6 +123,11 @@ export default function EditableTable({
                                                 ? validationErrors[cellKey]
                                                 : undefined
                                         }
+                                        onClick={() => {
+                                            if (editingCell !== cellKey) {
+                                                startEdit(cellKey, cellValue)
+                                            }
+                                        }}
                                     >
                                         {editingCell === cellKey ? (
                                             <input
@@ -123,11 +144,12 @@ export default function EditableTable({
                                                     )
                                                 }
                                                 onKeyDown={(e) => {
-                                                    if (e.key === 'Enter')
+                                                    if (e.key === 'Enter') {
                                                         commitEdit(
                                                             row.index,
                                                             cell.column.id
                                                         )
+                                                    }
                                                     if (e.key === 'Escape') {
                                                         setEditingCell(null)
                                                         setTempValue('')

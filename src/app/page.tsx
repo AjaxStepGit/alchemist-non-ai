@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/useToast'
 import { EntityType } from '@/types/entities'
 import ValidationSummary from './components/ValidationSummary'
 import { validateDataAdvanced } from './lib/validateData'
-import { validateRulesAdvanced } from './lib/advancedValidation'
+// import { validateRulesAdvanced } from './lib/advancedValidation'
 
 export type Rule =
     | { type: 'coRun'; tasks: string[] }
