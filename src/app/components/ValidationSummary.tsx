@@ -2,6 +2,8 @@
 
 import { EntityType } from '@/types/entities'
 
+//validation summary
+
 export default function ValidationSummary({
     summaryErrors,
     advancedErrors,
